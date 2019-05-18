@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	fraction := divideHex("AAAFFFFFFFFFFFFF", "FFFFFFFFFFFFFFFF")
+	fraction := DivideHex("AAAFFFFFFFFFFFFF", "FFFFFFFFFFFFFFFF")
 	fmt.Println(fraction)
 }

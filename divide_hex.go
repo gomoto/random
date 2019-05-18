@@ -5,7 +5,7 @@ import (
 )
 
 // Divide two base-16 numbers.
-func divideHex(hexNumerator string, hexDenominator string) float64 {
+func DivideHex(hexNumerator string, hexDenominator string) float64 {
 	// If either hex value is larger than the maximum allowed
 	// ("FFFFFFFFFFFFFFFF"), ParseUint will panic.
 	intDenominator, err := strconv.ParseUint(hexDenominator, 16, 64)
