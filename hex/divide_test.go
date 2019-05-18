@@ -6,11 +6,11 @@ import (
 	"github.com/gomoto/random/hex"
 )
 
-func TestDivideHex_NormalCase(t *testing.T) {
-	hex.DivideHex("ABC", "FFF")
+func TestDivide_NormalCase(t *testing.T) {
+	hex.Divide("ABC", "FFF")
 }
 
-func TestDivideHex_NumeratorTooBig(t *testing.T) {
-	hex.DivideHex("ABC", "FFF")
-	// DivideHex("FFFFFFFFFFFFFFFFF", "FFF")
+func TestDivide_NumeratorTooBig(t *testing.T) {
+	hex.Divide("ABC", "FFF")
+	// Divide("FFFFFFFFFFFFFFFFF", "FFF")
 }
