@@ -40,6 +40,9 @@ func (e *MapIntInputMaxError) Error() string {
 }
 
 func MapInt(value Int, fromRange IntRange, toRange IntRange) (*Int, error) {
+	// Solve for Value2:
+	// (Max2 - Min2)/(Max1 - Min1) = (Value2 - Min2)/(Value1 - Min1)
+	// Value2 = Min2 + (Value1 - Min1)(Max2 - Min2)/(Max1 - Min1)
 	if fromRange.Min.Cmp(fromRange.Max) == 1 {
 		return nil, &IntRangeError{IntRange: &fromRange}
 	}
@@ -52,8 +55,24 @@ func MapInt(value Int, fromRange IntRange, toRange IntRange) (*Int, error) {
 	if value.Cmp(fromRange.Max) == 1 {
 		return nil, &MapIntInputMaxError{Value: &value, Max: fromRange.Max}
 	}
-	// do math as floats
-
-	outputValue := int64(0)
-	return big.NewInt(outputValue), nil
+	// (Value1 - Min1)
+	numeratorA := new(Int)
+	numeratorA.Sub(&value, fromRange.Min)
+	// (Max2 - Min2)
+	numeratorB := new(Int)
+	numeratorB.Sub(toRange.Max, toRange.Min)
+	numerator := new(Int)
+	numerator.Mul(numeratorA, numeratorB)
+	// (Max1 - Min1)
+	denominator := new(Int)
+	denominator.Sub(fromRange.Max, fromRange.Min)
+	ratProduct := new(big.Rat)
+	ratProduct.SetFrac(numerator, denominator)
+	floatProduct := new(big.Float)
+	floatProduct.SetRat(ratProduct)
+	intProduct, _ := floatProduct.Int(nil)
+	outputValue := new(Int)
+	// Add Min2
+	outputValue.Add(intProduct, toRange.Min)
+	return outputValue, nil
 }
