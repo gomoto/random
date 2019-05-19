@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"math/big"
+	"net/http"
 
 	"github.com/gomoto/random/numbers"
 )
@@ -13,7 +16,35 @@ func main() {
 	toRangeMin := flag.Int64("min", 0, "Minimum integer (default 0)")
 	toRangeMax := flag.Int64("max", 0, "Maximum integer (default 0)")
 	flag.Parse()
-	hexValue := "C60BF83BDCBAD2C73F76B5AAC4604603EB325D690969545A28EAD1880A159C8EBEE3E1647957CC9F7AB16F4E7457B40B95F86497A9AEE59BFAFCEFD660927235"
+
+	// Make HTTP request
+	url := "https://beacon.nist.gov/beacon/2.0/chain/last/pulse/last"
+	client := &http.Client{}
+	request, err := http.NewRequest("GET", url, nil)
+	request.Header.Add("Accept", "application/json")
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println("Error 1")
+		fmt.Println(err.Error())
+		return
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Error 2")
+		fmt.Println(err.Error())
+		return
+	}
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(body, &responseBody)
+	if err != nil {
+		fmt.Println("Error 3")
+		fmt.Println(err.Error())
+		return
+	}
+	pulse := responseBody["pulse"].(map[string]interface{})
+	// hexValue is a 512-bit hexadecimal string (128 hex characters)
+	hexValue := pulse["outputValue"].(string)
 	hexMin := "0"
 	hexMax := "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 	intValue := new(big.Int)
@@ -24,6 +55,10 @@ func main() {
 	intMax.SetString(hexMax, 16)
 	fromRange := numbers.IntRange{Min: intMin, Max: intMax}
 	toRange := numbers.IntRange{Min: big.NewInt(*toRangeMin), Max: big.NewInt(*toRangeMax)}
-	outputValue, _ := numbers.MapInt(*intValue, fromRange, toRange)
+	outputValue, err := numbers.MapInt(*intValue, fromRange, toRange)
+	if err != nil {
+		fmt.Println("Error 4")
+		fmt.Println(err.Error())
+	}
 	fmt.Println(outputValue)
 }
