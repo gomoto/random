@@ -2,54 +2,58 @@ package numbers
 
 import (
 	"fmt"
+	"math/big"
 )
 
-type Uint64Range struct {
-	Min uint64
-	Max uint64
+// type alias
+type Int = big.Int
+
+type IntRange struct {
+	Min *Int
+	Max *Int
 }
 
-type Uint64RangeError struct {
-	uint64Range Uint64Range
+type IntRangeError struct {
+	IntRange *IntRange
 }
 
-func (e *Uint64RangeError) Error() string {
-	return fmt.Sprintf("min (%d) cannot be greater than max (%d)", e.uint64Range.Min, e.uint64Range.Max)
+func (e *IntRangeError) Error() string {
+	return fmt.Sprintf("Min (%s) cannot be greater than Max (%s)", e.IntRange.Min.String(), e.IntRange.Max.String())
 }
 
-type MapUint64InputMinError struct {
-	value uint64
-	min   uint64
+type MapIntInputMinError struct {
+	Value *Int
+	Min   *Int
 }
 
-func (e *MapUint64InputMinError) Error() string {
-	return fmt.Sprintf("value (%d) cannot be less than min (%d)", e.value, e.min)
+func (e *MapIntInputMinError) Error() string {
+	return fmt.Sprintf("Value (%s) cannot be less than Min (%s)", e.Value.String(), e.Min.String())
 }
 
-type MapUint64InputMaxError struct {
-	value uint64
-	max   uint64
+type MapIntInputMaxError struct {
+	Value *Int
+	Max   *Int
 }
 
-func (e *MapUint64InputMaxError) Error() string {
-	return fmt.Sprintf("value (%d) cannot be less than min (%d)", e.value, e.max)
+func (e *MapIntInputMaxError) Error() string {
+	return fmt.Sprintf("Value (%s) cannot be greater than Max (%s)", e.Value.String(), e.Max.String())
 }
 
-func MapUint64(value uint64, fromRange Uint64Range, toRange Uint64Range) (uint64, error) {
-	if fromRange.Min > fromRange.Max {
-		return 0, &Uint64RangeError{uint64Range: fromRange}
+func MapInt(value Int, fromRange IntRange, toRange IntRange) (*Int, error) {
+	if fromRange.Min.Cmp(fromRange.Max) == 1 {
+		return nil, &IntRangeError{IntRange: &fromRange}
 	}
-	if toRange.Min > toRange.Max {
-		return 0, &Uint64RangeError{uint64Range: toRange}
+	if toRange.Min.Cmp(toRange.Max) == 1 {
+		return nil, &IntRangeError{IntRange: &toRange}
 	}
-	if value < fromRange.Min {
-		return 0, &MapUint64InputMinError{value: value, min: fromRange.Min}
+	if value.Cmp(fromRange.Min) == -1 {
+		return nil, &MapIntInputMinError{Value: &value, Min: fromRange.Min}
 	}
-	if fromRange.Max < value {
-		return 0, &MapUint64InputMaxError{value: value, max: fromRange.Max}
+	if value.Cmp(fromRange.Max) == 1 {
+		return nil, &MapIntInputMaxError{Value: &value, Max: fromRange.Max}
 	}
 	// do math as floats
 
-	outputValue := 0
-	return uint64(outputValue), nil
+	outputValue := int64(0)
+	return big.NewInt(outputValue), nil
 }
