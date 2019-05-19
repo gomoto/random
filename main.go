@@ -13,7 +13,7 @@ import (
 func main() {
 	// Get target range from CLI args
 	toRangeMin := flag.Int64("min", 0, "Minimum integer (default 0)")
-	toRangeMax := flag.Int64("max", 0, "Maximum integer (default 0)")
+	toRangeMax := flag.Int64("max", 100, "Maximum integer (default 100)")
 	flag.Parse()
 
 	// Get latest random value
