@@ -34,9 +34,11 @@ func main() {
 	fromRangeMax.SetString(hexMax, 16)
 	toRangeMin := big.NewInt(*toRangeMinRaw)
 	toRangeMax := big.NewInt(*toRangeMaxRaw)
-	// Add one to each maximum before mapping
-	fromRange := numbers.IntRange{Min: fromRangeMin, Max: fromRangeMax}
-	toRange := numbers.IntRange{Min: toRangeMin, Max: toRangeMax}
+	// Add one to each maximum before mapping.
+	// The adjusted maximum values are never realized;
+	// their purpose is to fix the scaling of the mapping.
+	fromRange := numbers.IntRange{Min: fromRangeMin, Max: fromRangeMax.Add(fromRangeMax, big.NewInt(1))}
+	toRange := numbers.IntRange{Min: toRangeMin, Max: toRangeMax.Add(toRangeMax, big.NewInt(1))}
 	outputValue, err := numbers.MapInt(*fromValue, fromRange, toRange)
 	if err != nil {
 		fmt.Println("Error 2")
