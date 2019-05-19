@@ -11,17 +11,21 @@ import (
 
 // Print random number between specified min and max
 func main() {
+	// Get target range from CLI args
 	toRangeMin := flag.Int64("min", 0, "Minimum integer (default 0)")
 	toRangeMax := flag.Int64("max", 0, "Maximum integer (default 0)")
 	flag.Parse()
 
-	hexValue, err := nist.GetLatest()
+	// Get latest random value
+	hexValue, err := nist.GetLatestValue()
 	if err != nil {
 		fmt.Println("Error 1")
 		fmt.Println(err.Error())
 	}
-	hexMin := "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-	hexMax := "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+	hexMin := nist.GetMinValue()
+	hexMax := nist.GetMaxValue()
+
+	// Convert random value to a value in the target range
 	intValue := new(big.Int)
 	intMin := new(big.Int)
 	intMax := new(big.Int)

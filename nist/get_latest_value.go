@@ -7,7 +7,7 @@ import (
 )
 
 // Get latest random value from beacon.nist.gov
-func GetLatest() (string, error) {
+func GetLatestValue() (string, error) {
 	url := "https://beacon.nist.gov/beacon/2.0/chain/last/pulse/last"
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
