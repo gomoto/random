@@ -12,8 +12,8 @@ import (
 // Print random number between specified min and max
 func main() {
 	// Get target range from CLI args
-	toRangeMin := flag.Int64("min", 0, "Minimum integer (default 0)")
-	toRangeMax := flag.Int64("max", 100, "Maximum integer (default 100)")
+	toRangeMinRaw := flag.Int64("min", 0, "Minimum integer (default 0)")
+	toRangeMaxRaw := flag.Int64("max", 100, "Maximum integer (default 100)")
 	flag.Parse()
 
 	// Get latest random value
@@ -26,15 +26,18 @@ func main() {
 	hexMax := nist.GetMaxValue()
 
 	// Convert random value to a value in the target range
-	intValue := new(big.Int)
-	intMin := new(big.Int)
-	intMax := new(big.Int)
-	intValue.SetString(hexValue, 16)
-	intMin.SetString(hexMin, 16)
-	intMax.SetString(hexMax, 16)
-	fromRange := numbers.IntRange{Min: intMin, Max: intMax}
-	toRange := numbers.IntRange{Min: big.NewInt(*toRangeMin), Max: big.NewInt(*toRangeMax)}
-	outputValue, err := numbers.MapInt(*intValue, fromRange, toRange)
+	fromValue := new(big.Int)
+	fromRangeMin := new(big.Int)
+	fromRangeMax := new(big.Int)
+	fromValue.SetString(hexValue, 16)
+	fromRangeMin.SetString(hexMin, 16)
+	fromRangeMax.SetString(hexMax, 16)
+	toRangeMin := big.NewInt(*toRangeMinRaw)
+	toRangeMax := big.NewInt(*toRangeMaxRaw)
+	// Add one to each maximum before mapping
+	fromRange := numbers.IntRange{Min: fromRangeMin, Max: fromRangeMax}
+	toRange := numbers.IntRange{Min: toRangeMin, Max: toRangeMax}
+	outputValue, err := numbers.MapInt(*fromValue, fromRange, toRange)
 	if err != nil {
 		fmt.Println("Error 2")
 		fmt.Println(err.Error())
