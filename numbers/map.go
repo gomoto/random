@@ -39,6 +39,7 @@ func (e *MapIntInputMaxError) Error() string {
 	return fmt.Sprintf("Value (%s) cannot be greater than Max (%s)", e.Value.String(), e.Max.String())
 }
 
+// Map input integer to output integer, given input and output integer ranges.
 func MapInt(value Int, fromRange IntRange, toRange IntRange) (*Int, error) {
 	// Solve for Value2:
 	// (Max2 - Min2)/(Max1 - Min1) = (Value2 - Min2)/(Value1 - Min1)
